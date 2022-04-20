@@ -28,5 +28,6 @@ def main():
     print(myExecutable.getSectionContents(".text"))
     print(myExecutable.getSectionFunctions(".text"))
 
+
 if __name__=="__main__":
     main()
