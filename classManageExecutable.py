@@ -32,6 +32,7 @@ class ManageExecutable():
         """
         self.__executableFile = open(fileName, 'r')
         self.__executableFileContents = self.__executableFile.readlines()
+        self.__sectionList = []
         self.generateSections()
 
 
@@ -50,7 +51,7 @@ class ManageExecutable():
                 # Create a list of that line
                 sentenceList = list(line.split(" "))
                 # Takes of new line from sectionName
-                sentenceList[-1] = sentenceList[-1][:-1]
+                sentenceList[-1] = sentenceList[-1][:-2]
                 # Take the last work in that list of words in line
                 # and set that as the section name
                 sectionName = sentenceList[len(sentenceList)-1]
@@ -67,17 +68,27 @@ class ManageExecutable():
         sectionContents = ""
         readOn = False
         for line in self.__executableFileContents:
+            secName = list(line.split(" "))
+            secName[-1] = secName[-1][:-2]
             # If same name from before is found, we can start reading the next line
-            if sectionName in line and "Disassembly of section" in line:
+            if sectionName in line and "Disassembly of section" in line and sectionName == secName[-1]:
                 readOn = True
             # Save section contents, excluding empty lines in section
             elif(("Disassembly of section" not in line) and readOn == True and line != "\n" and line != ''):
                     sectionContents += line
             # Stop reading section contents
-            elif(("Disassembly of section" in line and sectionName not in line)):
-                readOn = False
+            elif("Disassembly of section" in line):
+                    readOn = False
         # Create section data structure using sectionName and sectionContents
-        Section(sectionName, sectionContents)
+        #print(sectionName)
+        self.genSectionList(Section(sectionName, sectionContents))
+
+
+    def genSectionList(self, sectionObj):
+        """
+        Can get file object if desired
+        """
+        self.__sectionList.append(sectionObj)
 
 
     def printFileContents(self):
@@ -86,13 +97,15 @@ class ManageExecutable():
         """
         for line in self.__executableFileContents:
             print(line,end="")
-        
 
-    def getFile(self):
+
+    def getSectionList(self):
         """
-        Can get file object is desired
+        Get list of section objects
+        Input:  Executable 'self' object
+        Output: List of section object that belong to executable file
         """
-        return self.__executableFileContents
+        return self.__sectionList
 
 
     def getSections(self):
@@ -102,38 +115,16 @@ class ManageExecutable():
         Input:  ManageExecutable 'self' object
         Output: List of section objects
         """
-        myList = []
-        for a in Section.getSections():
-            myList.append(a.getSectionName())
-        return myList
+        for a in self.__sectionList:
+            print(a.getSectionName())
 
 
-    def getSectionContents(self, sectionName):
+    def getSectionFunctionList(self, mySection):
         """
-        Given a specific section to look at, return
-        the contents of that section.
-
-        Input:  section name to be returned
-        Output: contents cooresponding to section name
+        Get list of object functions given the section name
+        Input:  Executable 'self' object, section's name
+        Output: List of section's function objects
         """
-        for a in Section.getSections():
-            if sectionName in a.getSectionName():
-                return a.getSectionContents()
-    def getSectionNames(self):
-        mySectionList = []
-        for a in Section.getSections():
-            mySectionList.append(a.getSectionName())
-        return mySectionList
-
-    def getSectionFunctions(self, sectionName):
-        """
-        Return a list of functions that belong to that specific 
-        section.
-
-        Input:  section you want to find the functions for
-        Output: returned function objects list that coorespond
-                to the section provided
-        """
-        for a in Section.getSections():
-            if sectionName in a.getSectionName():
+        for a in self.__sectionList:
+            if mySection == a.getSectionName():
                 return a.getFunctionList()
