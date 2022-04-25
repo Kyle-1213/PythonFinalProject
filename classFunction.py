@@ -12,5 +12,5 @@ class Function():
     like memory address, hex value, instruction command,
     registers used. 
     """
-    def __init__(self):
+    def __init__(self, assemblyCommand):
         1==1

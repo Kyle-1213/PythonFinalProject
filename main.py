@@ -23,11 +23,14 @@ from classFunction import *
 
 def main():
     myExecutable = ManageExecutable("testDump.txt")
-    #myExecutable.printFileContents()
+    print("\nGetting file contents...\n")
+    myExecutable.printFileContents()
     #myExecutableSections = myExecutable.getSections()
+    print("\nPrinting executable's sections...\n")
+    print(myExecutable.getSections())
+    print("\nPrinting contents for section 'text'...\n")
     print(myExecutable.getSectionContents(".text"))
-    print(myExecutable.getSectionFunctions(".text"))
-
+    
 
 if __name__=="__main__":
     main()

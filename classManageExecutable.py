@@ -6,7 +6,7 @@
 
 
 from classSection import *
-
+from classFunction import *
 
 class ManageExecutable():
     """
@@ -49,6 +49,8 @@ class ManageExecutable():
             if "Disassembly of section" in line:
                 # Create a list of that line
                 sentenceList = list(line.split(" "))
+                # Takes of new line from sectionName
+                sentenceList[-1] = sentenceList[-1][:-1]
                 # Take the last work in that list of words in line
                 # and set that as the section name
                 sectionName = sentenceList[len(sentenceList)-1]
@@ -102,7 +104,7 @@ class ManageExecutable():
         """
         myList = []
         for a in Section.getSections():
-            myList.append(a)
+            myList.append(a.getSectionName())
         return myList
 
 
@@ -117,7 +119,11 @@ class ManageExecutable():
         for a in Section.getSections():
             if sectionName in a.getSectionName():
                 return a.getSectionContents()
-
+    def getSectionNames(self):
+        mySectionList = []
+        for a in Section.getSections():
+            mySectionList.append(a.getSectionName())
+        return mySectionList
 
     def getSectionFunctions(self, sectionName):
         """
