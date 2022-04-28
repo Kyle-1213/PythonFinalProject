@@ -34,10 +34,19 @@ def main():
     for a in sectionList:
         secName = a.getSectionName()
         secFunctionList = myExecutable.getSectionFunctionList(secName)
+        print("Section name...")
         print(secName)
         for b in secFunctionList:
+            print("Function Name...")
             print(b.getFunctionName())
+            print("Function", b.getFunctionName(), "contents...")
             print(b.getFunctionContents())
+            functionDictList = b.getFunctionDictionaryList()
+            for line in functionDictList:
+                #print(line["instruction"])
+                if "call" in line["instruction"]:
+                    print("Function", b.getFunctionName(), "contains a 'call' at line:", line["memAddress"])
+
     #myExecutable.getSections()
     #myExecutable.getSectionFunctionList(".text")
 

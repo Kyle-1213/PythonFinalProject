@@ -7,38 +7,70 @@
 
 class Function():
     """
-    Class will eventually contain attributes for
-    each function.
-    This will be a super class, where eventually every
-    line in the funciton will have it's own attributes
-    like memory address, hex value, instruction command,
-    registers used. 
+    Create a dictionary for each line of a function. Used
+    so one can find a specific memory line, instruction,
+    register, etc. from a specific function.
     """
     def __init__(self, functionName, functionContents):
         self.__functionName = functionName
         self.__functionContents = functionContents
-        #if "<_start>" in functionName:
-            #self.genAssemblyDictionary()
+        self.__functionDictionaryList = []
+        self.genAssemblyDictionary()
+        #print(self.__functionDictionaryList)
 
-
+        
     def genAssemblyDictionary(self):
         """
         Take mem address, hex, instruction, register, comment
-        from each line in function and put in dictionary
+        from each line in function and put in dictionary. Add
+        dictionary to list so there's a list of dictionaries
         Input:  Self 'function' object
-        Output: Each assembly line part put in dictionary
+        Output: Each assembly line part put in dictionary,
+                added to list of dictionaries
         """
-        memAddress = ""
-        hex = ""
-        instruction = ""
-        registers = ""
-        index = 0
+        # Take long string and separate by new lines
         functionSeparator = self.__functionContents.split("\n")
+        # Go through each line of function's contents
         for line in functionSeparator:
-            while("  " in line):
-                line = line.replace("  ", " ")
-            print(line)
-            #for char in line:                
+            # Variable decarations
+            lineDict = {}
+            memAddress = ""
+            myHex = ""
+            instruction = ""
+            registers = ""
+            comment = ""
+            # Take tabs and turn them into 3 spaces to be parsed by split
+            line = line.replace("\t", "   ")
+            # Create a list of words separated by three spaces
+            lis = list(line.split("   "))
+            # Take out empty words in list
+            for a in lis:
+                # Keyword for taking out empty string
+                if not a:
+                    lis.remove(a)
+            # Some empty strings not take out
+            if len(lis) > 1:
+                memAddress = lis[0]
+                memAddress = memAddress[:-1]
+                myHex = lis[1]
+                # If line has a comment
+                if '#' in lis[-1]:
+                    comment = lis[-1]
+                    registers = lis[-2]
+                    instruction = lis[-3]
+                # If not comment, put "None" for comment
+                else:
+                    comment = "None"
+                    register = lis[-1]
+                    instruction = lis[-2]
+            # Create a dictionary of each line in function
+            lineDict["memAddress"] = memAddress
+            lineDict["hex"] = myHex
+            lineDict["instruction"] = instruction
+            lineDict["registers"] = registers
+            lineDict["comment"] = comment
+            # Create list of dictionaries for function
+            self.__functionDictionaryList.append(lineDict)
 
 
     def getFunctionName(self):
@@ -55,3 +87,14 @@ class Function():
         Input:  Self 'function' object
         """
         return self.__functionContents
+
+
+    def getFunctionDictionaryList(self):
+        """
+        Returns list of all lines in a dictionary, sorted by
+        the lines memory address, hex, instruction, registers,
+        and comments.
+        Input:  Function 'self' object
+        Output: Returns list of dictionarys for lines in function
+        """
+        return self.__functionDictionaryList

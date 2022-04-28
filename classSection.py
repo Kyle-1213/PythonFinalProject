@@ -27,7 +27,7 @@ class Section():
         self.__sectionName = sectionName
         self.__sectionContents = sectionContents
         self.__functionList = self.generateFunction()
-
+                    
 
     def generateFunction(self):
         """
