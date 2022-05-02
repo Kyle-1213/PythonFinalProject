@@ -95,7 +95,7 @@ def createFunctionCallList(myFile):
 def displayAssemblyCalls(myFile):
     assemblyList = createFunctionCallList(myFile)
 
-    SCREEN_SIZE = 800
+    SCREEN_SIZE = 600    
     rowCount = len(assemblyList)+1
     height = SCREEN_SIZE / rowCount
     width = SCREEN_SIZE / 5
@@ -111,17 +111,20 @@ def displayAssemblyCalls(myFile):
     for i in range(1, rowCount+1):
         newHeight = height
         newWidth = width
-        for j in range(1,6):
-            tableT.forward(width*j)
+        for j in range(5):
+            tableT.forward(newWidth)
+            print(newWidth)
+            newWidth = width*2
             tableT.right(90)
-            tableT.forward(height*i)
+            tableT.forward(height)
             tableT.right(90)
             tableT.forward(width)
             tableT.right(90)
             tableT.forward(height)
             tableT.right(90)
-
-            #tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
+        tableT.penup()
+        tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
+        tableT.pendown()
 
 
     wn.exitonclick()
