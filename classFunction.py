@@ -28,6 +28,10 @@ class Function():
         Output: Each assembly line part put in dictionary,
                 added to list of dictionaries
         """
+        assemblyCallsList = ["jmp", "je", "jz", "jne", "jnz", "js", "jns", "jg", "jnle", "jge",
+                     "jnl", "jl", "jnge", "jle", "jng", "ja", "jnbe", "jae", "jnb", "jb",
+                     "jnae", "jbe", "jna", "call", "leave", "ret"]
+    
         # Take long string and separate by new lines
         functionSeparator = self.__functionContents.split("\n")
         # Go through each line of function's contents
@@ -56,12 +60,17 @@ class Function():
                 # If line has a comment
                 if '#' in lis[-1]:
                     comment = lis[-1]
-                    registers = lis[-2]
+                    registers = "None"
+                    if len(lis[-2]) > 1:
+                        registers = lis[-2]
+                    #registers = lis[-2]
                     instruction = lis[-3]
                 # If not comment, put "None" for comment
                 else:
                     comment = "None"
-                    register = lis[-1]
+                    registers = "None"
+                    if len(lis[-1]) > 1:
+                        registers = lis[-1]
                     instruction = lis[-2]
             # Create a dictionary of each line in function
             lineDict["memAddress"] = memAddress

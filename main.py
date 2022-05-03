@@ -21,39 +21,13 @@ from classManageExecutable import *
 from classSection import *
 from classFunction import *
 
-myFile1 = ManageExecutable("testDump.txt")
+myFile1 = ManageExecutable("dumpTest.txt")
 assemblyCallsList = ["jmp", "je", "jz", "jne", "jnz", "js", "jns", "jg", "jnle", "jge",
                      "jnl", "jl", "jnge", "jle", "jng", "ja", "jnbe", "jae", "jnb", "jb",
                      "jnae", "jbe", "jna", "call", "leave", "ret"]
 
 def main():
-    myExecutable = ManageExecutable("testDump.txt")
-    #print("\nGetting file contents...\n")
-    #myExecutable.printFileContents()
-    #myExecutableSections = myExecutable.getSections()
-    #print("\nPrinting executable's sections...\n")
-    #print(myExecutable.getSections())
-    #print("\nPrinting contents for section 'text'...\n")
-    #print(myExecutable.getSectionContents(".text"))
-    sectionList = myExecutable.getSectionList()
-    for a in sectionList:
-        secName = a.getSectionName()
-        secFunctionList = myExecutable.getSectionFunctionList(secName)
-        print("Section name...")
-        print(secName)
-        for b in secFunctionList:
-            print("Function Name...")
-            print(b.getFunctionName())
-            print("Function", b.getFunctionName(), "contents...")
-            #print(b.getFunctionContents())
-            functionDictList = b.getFunctionDictionaryList()
-            for line in functionDictList:
-                #print(line["instruction"])
-                if "call" in line["instruction"]:
-                    print("Function", b.getFunctionName(), "contains a 'call' at line:", line["memAddress"])
-
-    #myExecutable.getSections()
-    #myExecutable.getSectionFunctionList(".text")
+    print("I")
 
 #if __name__=="__main__":
 #    main()
@@ -79,7 +53,7 @@ def printFunctionsFromSection(myFile, sectionName):
                 print(function.getFunctionContents())
 
 
-def createFunctionCallList(myFile):
+def createAssemblyCallList(myFile):
     assemblyCallList = []
     sectionList = myFile.getSectionList()
     for section in sectionList:
@@ -92,11 +66,13 @@ def createFunctionCallList(myFile):
                     if inst in dict["instruction"]:
                         assemblyCallList.append(dict)
     return assemblyCallList
-def displayAssemblyCalls(myFile):
-    assemblyList = createFunctionCallList(myFile)
 
-    SCREEN_SIZE = 600    
-    rowCount = len(assemblyList)+1
+
+def displayAssemblyCalls(myFile):
+    assemblyList = createAssemblyCallList(myFile)
+
+    SCREEN_SIZE = 800    
+    rowCount = len(assemblyList)
     height = SCREEN_SIZE / rowCount
     width = SCREEN_SIZE / 5
     tableT = turtle.Turtle()
@@ -108,12 +84,12 @@ def displayAssemblyCalls(myFile):
     tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2)
     tableT.pendown()
 
+    assemDictList = ["Memory Address", "Hex", "Instruction", "Registers", "Comment"]
+
     for i in range(1, rowCount+1):
-        newHeight = height
         newWidth = width
         for j in range(5):
             tableT.forward(newWidth)
-            print(newWidth)
             newWidth = width*2
             tableT.right(90)
             tableT.forward(height)
@@ -122,14 +98,102 @@ def displayAssemblyCalls(myFile):
             tableT.right(90)
             tableT.forward(height)
             tableT.right(90)
+            saveState = saveTurtleState(tableT)
+            tableT.penup()
+            tableT.forward(width/2)
+            tableT.right(90)
+            tableT.forward(height-1/2)
+            if i == 1:
+                tableT.write(assemDictList[j],move=False, font=('monaco',10,'bold'),align='center')
+            else:
+                myDictKey = list(assemblyList[i-1].keys())
+                tableT.write(assemblyList[i-1].get(myDictKey[j]),move=False, font=('monaco',8),align='center')
+            tableT.setheading(saveState[0])
+            tableT.setposition(saveState[1])
+            tableT.pendown()
         tableT.penup()
         tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
         tableT.pendown()
+    wn.exitonclick()
 
+
+def saveTurtleState(turtle):
+    return turtle.heading(), turtle.position()
+
+
+def createFunctionCallList(myFile):
+    functionCallList = []
+    sectionList = myFile.getSectionList()
+    for section in sectionList:
+        sectionName = section.getSectionName()
+        functionList = myFile.getSectionFunctionList(sectionName)
+        for func in functionList:
+            functionDictionaryList = func.getFunctionDictionaryList()
+            for dict in functionDictionaryList:
+                comment = dict["comment"]
+                commentList = list(comment.split(" "))
+                commentList.remove(commentList[0])
+                if len(commentList) > 1:
+                    commentList.remove(commentList[0])
+                    commentList.remove(commentList[0])
+                    commentList.insert(0, dict["memAddress"])
+                    functionCallList.append(commentList)
+    return functionCallList
+
+
+def displayFunctionCalls(myFile):
+    functionList = createFunctionCallList(myFile)
+
+    SCREEN_SIZE = 800
+    numColumns = 3
+    rowCount = len(functionList)
+    height = SCREEN_SIZE / rowCount
+    width = SCREEN_SIZE / numColumns
+    tableT = turtle.Turtle()
+    tableT.speed('fastest')
+    wn = turtle.Screen()
+    wn.setup(SCREEN_SIZE+50, SCREEN_SIZE+50)
+
+    tableT.penup()
+    tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2)
+    tableT.pendown()
+
+    functionHeadingList = ["Address Location", "Function Memory Location", "Function Name"]
+
+    for i in range(1, rowCount+1):
+        newWidth = width
+        for j in range(numColumns):
+            tableT.forward(newWidth)
+            newWidth = width*2
+            tableT.right(90)
+            tableT.forward(height)
+            tableT.right(90)
+            tableT.forward(width)
+            tableT.right(90)
+            tableT.forward(height)
+            tableT.right(90)
+            saveState = saveTurtleState(tableT)
+            tableT.penup()
+            tableT.forward(width/2)
+            tableT.right(90)
+            tableT.forward(height-1/2)
+            if i == 1:
+                tableT.write(functionHeadingList[j],move=False, font=('monaco',10,'bold'),align='center')
+            else:
+                #myDictKey = list(functionHeadingList[i-1].keys())
+                tableT.write(functionList[i-1][j],move=False, font=('monaco',8),align='center')
+            tableT.setheading(saveState[0])
+            tableT.setposition(saveState[1])
+            tableT.pendown()
+        tableT.penup()
+        tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
+        tableT.pendown()
 
     wn.exitonclick()
 #main()
 printSections()
 printFunctionsFromSection(myFile1, ".plt")
 #createFunctionCallList(myFile1)
-displayAssemblyCalls(myFile1)
+#displayAssemblyCalls(myFile1)
+#createFunctionCallList(myFile1)
+displayFunctionCalls(myFile1)
