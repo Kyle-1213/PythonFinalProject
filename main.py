@@ -21,22 +21,25 @@ from classManageExecutable import *
 from classSection import *
 from classFunction import *
 
-myFile1 = ManageExecutable("dumpTest.txt")
 assemblyCallsList = ["jmp", "je", "jz", "jne", "jnz", "js", "jns", "jg", "jnle", "jge",
                      "jnl", "jl", "jnge", "jle", "jng", "ja", "jnbe", "jae", "jnb", "jb",
                      "jnae", "jbe", "jna", "call", "leave", "ret"]
 
 def main():
-    print("I")
+    #myFile1 = ManageExecutable("testDump.txt")
+    myFile2 = ManageExecutable("dumpTest.txt")
+    printFileContentsPls(myFile2)
+    printFunctionsFromSection(myFile2, ".plt")
+    displayAssemblyCalls(myFile2)
+    #displayFunctionCalls(myFile2)
 
-#if __name__=="__main__":
-#    main()
-def printFileContents():
-    myFile1.printFileContents()
+
+def printFileContentsPls(myFile):
+    myFile.printFileContents()
 
 
-def printSections():
-    sectionList = myFile1.getSectionList()
+def printSections(myFile):
+    sectionList = myFile.getSectionList()
     for section in sectionList:
         print("---------- Printing section", section.getSectionName() + "'s contents ----------")
         print(section.getSectionContents())
@@ -71,17 +74,19 @@ def createAssemblyCallList(myFile):
 def displayAssemblyCalls(myFile):
     assemblyList = createAssemblyCallList(myFile)
 
-    SCREEN_SIZE = 800    
+    SCREEN_SIZE_X = 1000
+    SCREEN_SIZE_Y = 500  
     rowCount = len(assemblyList)
-    height = SCREEN_SIZE / rowCount
-    width = SCREEN_SIZE / 5
+    height = SCREEN_SIZE_Y / rowCount
+    width = SCREEN_SIZE_X / 5
     tableT = turtle.Turtle()
+    #tableT.hideturtle()
     tableT.speed('fastest')
     wn = turtle.Screen()
-    wn.setup(SCREEN_SIZE+50, SCREEN_SIZE+50)
+    wn.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
 
     tableT.penup()
-    tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2)
+    tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
     tableT.pendown()
 
     assemDictList = ["Memory Address", "Hex", "Instruction", "Registers", "Comment"]
@@ -107,12 +112,12 @@ def displayAssemblyCalls(myFile):
                 tableT.write(assemDictList[j],move=False, font=('monaco',10,'bold'),align='center')
             else:
                 myDictKey = list(assemblyList[i-1].keys())
-                tableT.write(assemblyList[i-1].get(myDictKey[j]),move=False, font=('monaco',8),align='center')
+                tableT.write(assemblyList[i-1].get(myDictKey[j]),move=False, font=('monaco',7),align='center')
             tableT.setheading(saveState[0])
             tableT.setposition(saveState[1])
             tableT.pendown()
         tableT.penup()
-        tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
+        tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
         tableT.pendown()
     wn.exitonclick()
 
@@ -144,56 +149,53 @@ def createFunctionCallList(myFile):
 def displayFunctionCalls(myFile):
     functionList = createFunctionCallList(myFile)
 
-    SCREEN_SIZE = 800
+    SCREEN_SIZE_X = 700
+    SCREEN_SIZE_Y = 400
     numColumns = 3
     rowCount = len(functionList)
-    height = SCREEN_SIZE / rowCount
-    width = SCREEN_SIZE / numColumns
-    tableT = turtle.Turtle()
-    tableT.speed('fastest')
-    wn = turtle.Screen()
-    wn.setup(SCREEN_SIZE+50, SCREEN_SIZE+50)
+    height = SCREEN_SIZE_Y / rowCount
+    width = SCREEN_SIZE_X / numColumns
+    tableTurt = turtle.Turtle()
+    tableTurt.speed('fastest')
+    wn2 = turtle.Screen()
+    wn2.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
 
-    tableT.penup()
-    tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2)
-    tableT.pendown()
+    tableTurt.penup()
+    tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
+    tableTurt.pendown()
 
     functionHeadingList = ["Address Location", "Function Memory Location", "Function Name"]
 
     for i in range(1, rowCount+1):
         newWidth = width
         for j in range(numColumns):
-            tableT.forward(newWidth)
+            tableTurt.forward(newWidth)
             newWidth = width*2
-            tableT.right(90)
-            tableT.forward(height)
-            tableT.right(90)
-            tableT.forward(width)
-            tableT.right(90)
-            tableT.forward(height)
-            tableT.right(90)
-            saveState = saveTurtleState(tableT)
-            tableT.penup()
-            tableT.forward(width/2)
-            tableT.right(90)
-            tableT.forward(height-1/2)
+            tableTurt.right(90)
+            tableTurt.forward(height)
+            tableTurt.right(90)
+            tableTurt.forward(width)
+            tableTurt.right(90)
+            tableTurt.forward(height)
+            tableTurt.right(90)
+            saveState = saveTurtleState(tableTurt)
+            tableTurt.penup()
+            tableTurt.forward(width/2)
+            tableTurt.right(90)
+            tableTurt.forward(height-1/2)
             if i == 1:
-                tableT.write(functionHeadingList[j],move=False, font=('monaco',10,'bold'),align='center')
+                tableTurt.write(functionHeadingList[j],move=False, font=('monaco',10,'bold'),align='center')
             else:
                 #myDictKey = list(functionHeadingList[i-1].keys())
-                tableT.write(functionList[i-1][j],move=False, font=('monaco',8),align='center')
-            tableT.setheading(saveState[0])
-            tableT.setposition(saveState[1])
-            tableT.pendown()
-        tableT.penup()
-        tableT.goto(-SCREEN_SIZE/2, SCREEN_SIZE/2 - (height*i))
-        tableT.pendown()
+                tableTurt.write(functionList[i-1][j],move=False, font=('monaco',8),align='center')
+            tableTurt.setheading(saveState[0])
+            tableTurt.setposition(saveState[1])
+            tableTurt.pendown()
+        tableTurt.penup()
+        tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
+        tableTurt.pendown()
 
-    wn.exitonclick()
-#main()
-printSections()
-printFunctionsFromSection(myFile1, ".plt")
-#createFunctionCallList(myFile1)
-#displayAssemblyCalls(myFile1)
-#createFunctionCallList(myFile1)
-displayFunctionCalls(myFile1)
+    wn2.exitonclick()
+
+if __name__=="__main__":
+    main()
