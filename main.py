@@ -24,15 +24,45 @@ from classFunction import *
 assemblyCallsList = ["jmp", "je", "jz", "jne", "jnz", "js", "jns", "jg", "jnle", "jge",
                      "jnl", "jl", "jnge", "jle", "jng", "ja", "jnbe", "jae", "jnb", "jb",
                      "jnae", "jbe", "jna", "call", "leave", "ret"]
-
+myFile1 = ManageExecutable("testDump.txt")
+myFile2 = ManageExecutable("dumpTest.txt")
 def main():
-    #myFile1 = ManageExecutable("testDump.txt")
-    myFile2 = ManageExecutable("dumpTest.txt")
-    printFileContentsPls(myFile2)
-    printFunctionsFromSection(myFile2, ".plt")
-    displayAssemblyCalls(myFile2)
-    #displayFunctionCalls(myFile2)
 
+    SCREEN_SIZE_X = 1000
+    SCREEN_SIZE_Y = 500
+    wn = turtle.Screen()
+    wn.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
+    
+    printFileContentsPls(myFile1)
+    printFunctionsFromSection(myFile1, ".plt")
+
+    drawAssembly()
+    wn.onkey(drawFunction, "f")
+    wn.onkey(drawAssembly, "a")
+
+    wn.listen()
+    wn.mainloop()
+
+
+def drawFunction():
+    wn = turtle.Screen()
+    wn.clear()
+
+    SCREEN_SIZE_X = 1000
+    SCREEN_SIZE_Y = 500
+    displayFunctionCalls(myFile2, SCREEN_SIZE_X, SCREEN_SIZE_Y)
+
+
+def drawAssembly():
+    wn = turtle.Screen()
+    wn.clear()
+
+    SCREEN_SIZE_X = 1000
+    SCREEN_SIZE_Y = 500
+    displayAssemblyCalls(myFile2, SCREEN_SIZE_X, SCREEN_SIZE_Y)
+
+def clearScreen(wn):
+    wn.clearscreen()
 
 def printFileContentsPls(myFile):
     myFile.printFileContents()
@@ -71,19 +101,18 @@ def createAssemblyCallList(myFile):
     return assemblyCallList
 
 
-def displayAssemblyCalls(myFile):
+def displayAssemblyCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
     assemblyList = createAssemblyCallList(myFile)
 
-    SCREEN_SIZE_X = 1000
-    SCREEN_SIZE_Y = 500  
+    #SCREEN_SIZE_X = 1000
+    #SCREEN_SIZE_Y = 500  
     rowCount = len(assemblyList)
     height = SCREEN_SIZE_Y / rowCount
     width = SCREEN_SIZE_X / 5
     tableT = turtle.Turtle()
-    #tableT.hideturtle()
     tableT.speed('fastest')
-    wn = turtle.Screen()
-    wn.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
+    #wn = turtle.Screen()
+    #wn.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
 
     tableT.penup()
     tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
@@ -119,7 +148,7 @@ def displayAssemblyCalls(myFile):
         tableT.penup()
         tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
         tableT.pendown()
-    wn.exitonclick()
+    #wn.exitonclick()
 
 
 def saveTurtleState(turtle):
@@ -146,19 +175,19 @@ def createFunctionCallList(myFile):
     return functionCallList
 
 
-def displayFunctionCalls(myFile):
+def displayFunctionCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
     functionList = createFunctionCallList(myFile)
 
-    SCREEN_SIZE_X = 700
-    SCREEN_SIZE_Y = 400
+    #SCREEN_SIZE_X = 700
+    #SCREEN_SIZE_Y = 400
     numColumns = 3
     rowCount = len(functionList)
     height = SCREEN_SIZE_Y / rowCount
     width = SCREEN_SIZE_X / numColumns
     tableTurt = turtle.Turtle()
     tableTurt.speed('fastest')
-    wn2 = turtle.Screen()
-    wn2.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
+    #wn2 = turtle.Screen()
+    #wn2.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
 
     tableTurt.penup()
     tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
@@ -195,7 +224,7 @@ def displayFunctionCalls(myFile):
         tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
         tableTurt.pendown()
 
-    wn2.exitonclick()
+    #wn2.exitonclick()
 
 if __name__=="__main__":
     main()
