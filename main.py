@@ -47,19 +47,21 @@ def main():
 def drawFunction():
     wn = turtle.Screen()
     wn.clear()
-
+    wn.tracer(0)
     SCREEN_SIZE_X = 1000
     SCREEN_SIZE_Y = 500
     displayFunctionCalls(myFile2, SCREEN_SIZE_X, SCREEN_SIZE_Y)
+    wn.tracer(1)
 
 
 def drawAssembly():
     wn = turtle.Screen()
     wn.clear()
-
+    wn.tracer(0)
     SCREEN_SIZE_X = 1000
     SCREEN_SIZE_Y = 500
     displayAssemblyCalls(myFile2, SCREEN_SIZE_X, SCREEN_SIZE_Y)
+    wn.tracer(1)
 
 def clearScreen(wn):
     wn.clearscreen()
