@@ -3,7 +3,16 @@
         Created by Kyle LeDoux
             Final Python Project in CS212 
     """
-
+"""
+Year and Semester    : 2022 SPRING
+Course Number        : CS-212
+Course Title         : Practical Python
+Work Number          : HA-17
+Work Name            : Final Project Deliverables
+Work Version         : Version 1
+Long Date            : Sunday, 8 May 2022
+Author(s) Name(s)    : Kyle LeDoux
+"""
 
 from classSection import *
 from classFunction import *
