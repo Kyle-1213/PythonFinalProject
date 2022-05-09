@@ -141,42 +141,55 @@ def printFunctionsFromSection(myFile, sectionName):
 
 
 def createAssemblyCallList(myFile):
+    """
+    Creates a list of all assembly lines with an assembly call
+    Input:  Binary object file
+    Output: List of all assembly calls in binary and locations
+    """
     assemblyCallList = []
     sectionList = myFile.getSectionList()
     for section in sectionList:
         sectionName = section.getSectionName()
         functionList = myFile.getSectionFunctionList(sectionName)
+        # Cycle through functions of sections
         for func in functionList:
             functionDictionaryList = func.getFunctionDictionaryList()
+            # Cycle through dictionary list
             for dict in functionDictionaryList:
+                # Find instructions for assembly lines and add to list
+                # if they belong to the function call lists made above
                 for inst in assemblyCallsList:
                     if inst in dict["instruction"]:
                         assemblyCallList.append(dict)
     return assemblyCallList
 
 
-def displayAssemblyCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
+def displayAssemblyCalls(myFile):
+    """
+    Uses list assembly call list generated from createAssemblyCallList()
+    Input:  Binary object file
+    Output: Table of assembly calls from turtle module
+    """
     assemblyList = createAssemblyCallList(myFile)
-
-    #SCREEN_SIZE_X = 1000
-    #SCREEN_SIZE_Y = 500  
     rowCount = len(assemblyList)
+    # How big each box should be
     height = SCREEN_SIZE_Y / rowCount
+    # Amount of columns for table
     width = SCREEN_SIZE_X / 5
+
     tableT = turtle.Turtle()
     tableT.speed('fastest')
-    #wn = turtle.Screen()
-    #wn.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
-
+    # Go to top left corner of turtle screen
     tableT.penup()
     tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
     tableT.pendown()
-
+    # Used to write in turtle table
     assemDictList = ["Memory Address", "Hex", "Instruction", "Registers", "Comment"]
-
+    # For each box x, y (or i,j) of table
     for i in range(1, rowCount+1):
         newWidth = width
         for j in range(5):
+            # Create table box 
             tableT.forward(newWidth)
             newWidth = width*2
             tableT.right(90)
@@ -186,44 +199,68 @@ def displayAssemblyCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
             tableT.right(90)
             tableT.forward(height)
             tableT.right(90)
+            # Saves where the turtle is at the current moment so the name
+            # that goes in said box can be written in
             saveState = saveTurtleState(tableT)
             tableT.penup()
+            # Go down to center of box
             tableT.forward(width/2)
             tableT.right(90)
             tableT.forward(height-1/2)
+            # If if the title of table
             if i == 1:
                 tableT.write(assemDictList[j],move=False, font=('monaco',10,'bold'),align='center')
+            # Not title of table, put contents of assembly line
             else:
                 myDictKey = list(assemblyList[i-1].keys())
                 tableT.write(assemblyList[i-1].get(myDictKey[j]),move=False, font=('monaco',7),align='center')
+            # Resore where turtle was
             tableT.setheading(saveState[0])
             tableT.setposition(saveState[1])
             tableT.pendown()
+        # Go back to far left of screen and correct heigh for current row
         tableT.penup()
         tableT.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
         tableT.pendown()
-    #wn.exitonclick()
 
 
 def saveTurtleState(turtle):
+    """
+    Save where the turtle is currently
+    Input:  Turtle object
+    Output: Direction of turtle and x/y position
+    """
     return turtle.heading(), turtle.position()
 
 
 def createFunctionCallList(myFile):
+    """
+    Creates a list of all function calls
+    Input:  Binary object file
+    Output: List of all function calls in binary and locations
+    """
     functionCallList = []
     sectionList = myFile.getSectionList()
     for section in sectionList:
         sectionName = section.getSectionName()
         functionList = myFile.getSectionFunctionList(sectionName)
+        # Cycle through functions of sections
         for func in functionList:
             functionDictionaryList = func.getFunctionDictionaryList()
+            # Cycle through dictionary list in function
             for dict in functionDictionaryList:
+                # Get comment from assembly line dictionary
                 comment = dict["comment"]
+                # Split comment into words
                 commentList = list(comment.split(" "))
+                # Remove unneeded part of comment
                 commentList.remove(commentList[0])
+                # If it's a real comment
                 if len(commentList) > 1:
+                    # Remove unneeded wordds
                     commentList.remove(commentList[0])
                     commentList.remove(commentList[0])
+                    # Add function call to lists
                     commentList.insert(0, dict["memAddress"])
                     functionCallList.append(commentList)
     return functionCallList
@@ -231,27 +268,26 @@ def createFunctionCallList(myFile):
 
 def displayFunctionCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
     functionList = createFunctionCallList(myFile)
-
-    #SCREEN_SIZE_X = 700
-    #SCREEN_SIZE_Y = 400
+    # Three columns for address of assembly line, address of function
+    # and function name being called
     numColumns = 3
     rowCount = len(functionList)
+    # Uses to put table row/colum into right position based on screen size
     height = SCREEN_SIZE_Y / rowCount
     width = SCREEN_SIZE_X / numColumns
     tableTurt = turtle.Turtle()
     tableTurt.speed('fastest')
-    #wn2 = turtle.Screen()
-    #wn2.setup(SCREEN_SIZE_X+50, SCREEN_SIZE_Y+50)
-
+    # Go to top left corner of screen
     tableTurt.penup()
     tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2)
     tableTurt.pendown()
-
+    # Create a list of headings
     functionHeadingList = ["Address Location", "Function Memory Location", "Function Name"]
-
+    # For row, column of table
     for i in range(1, rowCount+1):
         newWidth = width
         for j in range(numColumns):
+            # Create box for table
             tableTurt.forward(newWidth)
             newWidth = width*2
             tableTurt.right(90)
@@ -261,24 +297,28 @@ def displayFunctionCalls(myFile, SCREEN_SIZE_X, SCREEN_SIZE_Y):
             tableTurt.right(90)
             tableTurt.forward(height)
             tableTurt.right(90)
+            # Save where current turtle is
             saveState = saveTurtleState(tableTurt)
             tableTurt.penup()
+            # Go to center of box to write what goes in spot in table
             tableTurt.forward(width/2)
             tableTurt.right(90)
             tableTurt.forward(height-1/2)
+            # If it's a heading
             if i == 1:
                 tableTurt.write(functionHeadingList[j],move=False, font=('monaco',10,'bold'),align='center')
             else:
-                #myDictKey = list(functionHeadingList[i-1].keys())
+                #  Write in the table box
                 tableTurt.write(functionList[i-1][j],move=False, font=('monaco',8),align='center')
+            # Restore where turtle is
             tableTurt.setheading(saveState[0])
             tableTurt.setposition(saveState[1])
             tableTurt.pendown()
+        # Go back to far left of screen and correct heigh for current row
         tableTurt.penup()
         tableTurt.goto(-SCREEN_SIZE_X/2, SCREEN_SIZE_Y/2 - (height*i))
         tableTurt.pendown()
 
-    #wn2.exitonclick()
-
+# Call main at end of file
 if __name__=="__main__":
     main()
